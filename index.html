@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opening Instagram</title></head>
+<body style="font-family:sans-serif;text-align:center;padding-top:60px">
+<p id="m">Opening Instagram...</p>
+<script>
+var CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRv-GyM4QnYtYnIZfQyEffug0_822GdHgjLHQtyAIH7CJZ87mIuSBY5I3OD_l-8doDZu1kH59lM5Ssd/pub?gid=0&single=true&output=csv";
+var id = (new URLSearchParams(location.search).get("id") || "").trim();
+fetch(CSV + "&t=" + Date.now())
+  .then(function (r) { return r.text(); })
+  .then(function (t) {
+    var rows = t.split(/\r?\n/);
+    for (var i = 1; i < rows.length; i++) {
+      var c = rows[i].split(",");
+      var a = (c[0] || "").replace(/"/g, "").trim();
+      var b = (c[1] || "").replace(/"/g, "").trim();
+      if (a === id) {
+        if (/^https?:\/\//.test(b)) { location.replace(b); }
+        else { document.getElementById("m").textContent = "This card is not active yet."; }
+        return;
+      }
+    }
+    document.getElementById("m").textContent = "Card not found.";
+  })
+  .catch(function () {
+    document.getElementById("m").textContent = "Could not load. Please try again.";
+  });
+</script>
+</body></html>
